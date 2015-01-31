@@ -1,0 +1,13 @@
+[Unit]
+Description=Start process-pool launchpad daemon
+After=dbus.service vconf-setup.service ac.service
+
+[Service]
+EnvironmentFile=/run/tizen-mobile-env
+ExecStart=/usr/bin/launchpad-process-pool "                                                                                                                                                                                                         "
+TimeoutStopSec=3s
+Restart=always
+RestartSec=0
+
+[Install]
+WantedBy=graphical.target

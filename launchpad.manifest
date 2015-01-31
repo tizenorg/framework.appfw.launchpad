@@ -1,0 +1,17 @@
+<manifest>
+	<define>
+		<domain name="launchpad"/>
+		<request>
+			<smack request="aul::launch" type="x"/>
+			<smack request="aul::terminate" type="x"/>
+			<smack request="security-server::api-privilege-by-pid" type="w"/>
+			<smack request="system::share" type="rwxat"/>
+			<smack request="sound_server" type="rwx"/>
+			<smack request="system::homedir" type="rwxat"/>
+			<smack request="pulseaudio" type="rwxat"/>
+		</request>
+	</define>
+	<request>
+		<domain name="launchpad"/>
+	</request>
+</manifest>
