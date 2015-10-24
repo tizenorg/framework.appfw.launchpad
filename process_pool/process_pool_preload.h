@@ -30,50 +30,47 @@ static void** g_dlopen_handle_list = NULL;
 
 static inline int __preload_save_dlopen_handle(void *handle)
 {
-    if (!handle) {
-        return 1;
-    }
-    if (g_dlopen_count == g_dlopen_size || !g_dlopen_handle_list) {
-        void** tmp =
-            realloc(g_dlopen_handle_list, 2 * g_dlopen_size * sizeof(void *));
-        if (NULL == tmp) {
-            _E("out of memory\n");
-            dlclose(handle);
-            return 1;
-        }
-        g_dlopen_size *= 2;
-        g_dlopen_handle_list = tmp;
-    }
-    g_dlopen_handle_list[g_dlopen_count++] = handle;
-    return 0;
+	if (!handle)
+		return 1;
+
+	if (g_dlopen_count == g_dlopen_size || !g_dlopen_handle_list) {
+		void** tmp =
+			realloc(g_dlopen_handle_list, 2 * g_dlopen_size * sizeof(void *));
+		if (NULL == tmp) {
+			_E("out of memory\n");
+			dlclose(handle);
+			return 1;
+		}
+		g_dlopen_size *= 2;
+		g_dlopen_handle_list = tmp;
+	}
+	g_dlopen_handle_list[g_dlopen_count++] = handle;
+	return 0;
 }
 
 static inline void __preload_fini_for_process_pool(void)
 {
-    int i = 0;
-    if (!g_dlopen_handle_list) {
-        return;
-    }
-    for (i = 0; i < g_dlopen_count; ++i)
-    {
-        void *handle = g_dlopen_handle_list[i];
-        if (handle) {
-            if (0 != dlclose(handle)) {
-                _E("dlclose failed\n");
-            }
-        }
-    }
-    free(g_dlopen_handle_list);
-    g_dlopen_handle_list = NULL;
-    g_dlopen_size = 5;
-    g_dlopen_count = 0;
+	int i = 0;
+	if (!g_dlopen_handle_list)
+		return;
+
+	for (i = 0; i < g_dlopen_count; ++i) {
+		void *handle = g_dlopen_handle_list[i];
+		if (handle) {
+			if (0 != dlclose(handle))
+				_E("dlclose failed\n");
+		}
+	}
+	free(g_dlopen_handle_list);
+	g_dlopen_handle_list = NULL;
+	g_dlopen_size = 5;
+	g_dlopen_count = 0;
 }
 
 static inline void __preload_init_for_process_pool(void)
 {
-    if (atexit(__preload_fini_for_process_pool) != 0) {
-        _E("Cannot register atexit callback. Libraries will not be unloaded");
-    }
+	if (atexit(__preload_fini_for_process_pool) != 0)
+		_E("Cannot register atexit callback. Libraries will not be unloaded");
 
 	void *handle = NULL;
 	char soname[MAX_LOCAL_BUFSZ] = { 0, };
@@ -86,21 +83,21 @@ static inline void __preload_init_for_process_pool(void)
 	}
 
 	while (fgets(soname, MAX_LOCAL_BUFSZ, preload_list) > 0) {
-        size_t len = strnlen(soname, MAX_LOCAL_BUFSZ);
-        if (len > 0) {
-            soname[len - 1] = '\0';
-        }
+		size_t len = strnlen(soname, MAX_LOCAL_BUFSZ);
+		if (len > 0)
+			soname[len - 1] = '\0';
+
 		handle = dlopen((const char *) soname, RTLD_NOW);
 		if (handle == NULL) {
-            _E("dlopen(\"%s\") was failed!", soname);
-            continue;
-        }
+			_E("dlopen(\"%s\") was failed!", soname);
+			continue;
+		}
 
-        if (__preload_save_dlopen_handle(handle) != 0) {
-            _E("Cannot save handle, no more preloads");
-            break;
-        }
-        _D("preload %s# - handle : %x\n", soname, handle);
+		if (__preload_save_dlopen_handle(handle) != 0) {
+			_E("Cannot save handle, no more preloads");
+			break;
+		}
+		_D("preload %s# - handle : %x\n", soname, handle);
 	}
 
 	fclose(preload_list);

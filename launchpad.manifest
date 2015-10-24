@@ -9,7 +9,15 @@
 			<smack request="sound_server" type="rwx"/>
 			<smack request="system::homedir" type="rwxat"/>
 			<smack request="pulseaudio" type="rwxat"/>
+			<smack request="xorg" type="rw"/>
+			<smack request="dbus" type="rwxa"/>
+			<smack request="isf" type="rwx"/>
+			<smack request="device::sys_logging" type="w"/>
 		</request>
+		<permit>
+			<smack permit="dbus" type="rwxa"/>
+			<smack permit="xorg" type="rwx"/>
+		</permit>
 	</define>
 	<request>
 		<domain name="launchpad"/>

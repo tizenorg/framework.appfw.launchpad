@@ -1,6 +1,7 @@
 [Unit]
 Description=Start process-pool launchpad daemon
-After=dbus.service vconf-setup.service ac.service
+Requires=xorg.service tizen-generate-env.service
+After=dbus.service vconf-setup.service ac.service xorg.service tizen-generate-env.service
 
 [Service]
 EnvironmentFile=/run/tizen-mobile-env
@@ -10,4 +11,4 @@ Restart=always
 RestartSec=0
 
 [Install]
-WantedBy=graphical.target
+WantedBy=multi-user.target
