@@ -532,7 +532,7 @@ end:
 
 	if (pid > 0) {
 		if (is_real_launch)
-			__send_app_launch_signal(pid);
+			__send_app_launch_signal(pid, pkg_name);
 	}
 
 	if (menu_info != NULL)
